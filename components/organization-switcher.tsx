@@ -34,7 +34,7 @@ export function OrganizationSwitcher() {
     };
 
     const handleSwitchOrganization = async (orgId: number) => {
-        localStorage.setItem('currentOrganizationId', orgId.toString());
+        localStorage.setItem('currentOrgId', orgId.toString());
         setIsOpen(false);
         await refetch(); // Refetch permissions for the new organization
         window.location.reload(); // Reload to refresh all data

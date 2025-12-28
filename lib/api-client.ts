@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:11177/api';
 
 export const createFetchWithAuth = (token?: string) => {
   return async (url: string, options: RequestInit = {}) => {
@@ -14,7 +14,18 @@ export const createFetchWithAuth = (token?: string) => {
       headers.Authorization = `Bearer ${authToken}`;
     }
 
-    const response = await fetch(`${API_URL}${url}`, {
+    // Add current organization context from localStorage
+    if (typeof window !== 'undefined') {
+      const currentOrgId = localStorage.getItem('currentOrgId');
+      if (currentOrgId) {
+        headers['x-crm-org-id'] = currentOrgId;
+      }
+    }
+
+    const fullUrl = `${API_URL}${url}`;
+    console.debug(`[API] ${options.method || 'GET'} ${fullUrl}`);
+
+    const response = await fetch(fullUrl, {
       ...options,
       headers,
       credentials: 'include',
@@ -28,10 +39,20 @@ export const createFetchWithAuth = (token?: string) => {
       } catch {
         error.errors = { general: response.statusText };
       }
+      console.error(`[API Error] ${fullUrl}:`, error.errors);
       throw error;
     }
 
-    return response.json();
+    // Handle empty responses (e.g., DELETE 200/204 with no body)
+    const contentLength = response.headers.get('content-length');
+    if (response.status === 204 || contentLength === '0' || contentLength === null) {
+      console.debug(`[API Response] ${fullUrl}: <empty>`);
+      return null;
+    }
+
+    const data = await response.json();
+    console.debug(`[API Response] ${fullUrl}:`, data);
+    return data;
   };
 };
 

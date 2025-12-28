@@ -27,38 +27,63 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<Error | null>(null);
   const [hasFetched, setHasFetched] = useState(false);
 
+  /**
+   * Step 1: Fetch user's organizations
+   * Step 2: Use stored org preference or first organization
+   * Step 3: Fetch permissions for that organization
+   */
   const fetchPermissions = async () => {
     try {
       setIsLoading(true);
-      console.log('PermissionsProvider: Fetching permissions...');
-      console.log('Token:', localStorage.getItem('token') ? 'present' : 'missing');
+      console.log('PermissionsProvider: Step 1 - Fetching user organizations...');
       
-      // Get current organization from localStorage or default
-      const currentOrgId = localStorage.getItem('currentOrganizationId');
-      const url = currentOrgId 
-        ? `/auth/permissions?organizationId=${currentOrgId}`
-        : '/auth/permissions';
-      
-      const response = await apiClient(url, {
+      // Step 1: Get user's organizations
+      const userResponse = await apiClient('/auth/me', {
         method: 'GET',
       });
       
-      console.log('PermissionsProvider: Permissions fetched successfully:', response);
-      setPermissions(response.permissions || []);
+      console.log('PermissionsProvider: User organizations:', userResponse.organizations);
       
-      // Set organizationId from response or localStorage
-      const orgId = response.organizationId || (currentOrgId ? parseInt(currentOrgId) : undefined);
-      setOrganizationId(orgId);
-      
-      // Store in localStorage if not already there
-      if (orgId && !currentOrgId) {
-        localStorage.setItem('currentOrganizationId', orgId.toString());
+      if (!userResponse.organizations || userResponse.organizations.length === 0) {
+        console.log('PermissionsProvider: User has no organizations');
+        setPermissions([]);
+        setOrganizationId(undefined);
+        setError(null);
+        setHasFetched(true);
+        return;
       }
+
+      // Step 2: Determine which organization to use
+      let currentOrgId = parseInt(localStorage.getItem('currentOrgId') || '0');
+      
+      // Validate that stored org is in user's organizations
+      const orgExists = userResponse.organizations.some((org: any) => org.id === currentOrgId);
+      
+      if (!orgExists || currentOrgId === 0) {
+        // Use first organization
+        currentOrgId = userResponse.organizations[0].id;
+        console.log('PermissionsProvider: Using default organization:', currentOrgId);
+      } else {
+        console.log('PermissionsProvider: Using stored organization:', currentOrgId);
+      }
+
+      // Step 3: Fetch permissions for the selected organization
+      console.log('PermissionsProvider: Step 2 - Fetching permissions for org:', currentOrgId);
+      const permissionsResponse = await apiClient(`/auth/permissions?organizationId=${currentOrgId}`, {
+        method: 'GET',
+      });
+      
+      console.log('PermissionsProvider: Permissions fetched for org:', currentOrgId, permissionsResponse.permissions);
+      setPermissions(permissionsResponse.permissions || []);
+      setOrganizationId(currentOrgId);
+      
+      // Store current organization preference
+      localStorage.setItem('currentOrgId', currentOrgId.toString());
       
       setError(null);
       setHasFetched(true);
     } catch (err) {
-      console.log('PermissionsProvider: No permissions (likely not authenticated):', err instanceof Error ? err.message : err);
+      console.log('PermissionsProvider: Error fetching permissions:', err instanceof Error ? err.message : err);
       // Expected error if not authenticated - don't set error state
       setPermissions([]);
       setHasFetched(true);

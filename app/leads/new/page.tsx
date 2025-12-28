@@ -7,11 +7,10 @@ import { Form } from '@/components/form';
 import { Input } from '@/components/input';
 import { Button } from '@/components/button';
 import { apiClient } from '@/lib/api-client';
-import { usePermissionsContext } from '@/lib/PermissionsProvider';
+import { Select } from '@/components/select';
 
 export default function CreateLeadPage() {
   const router = useRouter();
-  const { organizationId } = usePermissionsContext();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -21,10 +20,13 @@ export default function CreateLeadPage() {
     setErrors({});
 
     const formData = new FormData(e.currentTarget);
-    const data = {
-      ...Object.fromEntries(formData),
-      organizationId,
-    };
+    const raw = Object.fromEntries(formData);
+    // Remove empty-string fields to satisfy optional DTO validation
+    const data: Record<string, any> = {};
+    Object.entries(raw).forEach(([k, v]) => {
+      const val = typeof v === 'string' ? v.trim() : v;
+      if (val !== '') data[k] = val;
+    });
 
     try {
       await apiClient('/leads', {
@@ -85,16 +87,24 @@ export default function CreateLeadPage() {
         />
         
         <Input
-          name="company"
+          name="companyName"
           label="Company"
           placeholder="Company name"
-          error={errors.company}
+          error={errors.companyName}
         />
-        
-        <Input
+
+        <Select
           name="source"
           label="Source"
-          placeholder="e.g., LinkedIn, Referral, Website"
+          options={[
+            { value: 'website', label: 'Website' },
+            { value: 'referral', label: 'Referral' },
+            { value: 'social_media', label: 'Social Media' },
+            { value: 'email_campaign', label: 'Email Campaign' },
+            { value: 'cold_call', label: 'Cold Call' },
+            { value: 'event', label: 'Event' },
+            { value: 'other', label: 'Other' },
+          ]}
           error={errors.source}
         />
 
