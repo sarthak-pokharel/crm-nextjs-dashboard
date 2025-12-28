@@ -5,6 +5,7 @@ export enum PermissionScope {
   DEPARTMENT = 'department',
   TEAM = 'team',
   SELF = 'self',
+  OWNER = 'owner',
 }
 
 export enum PermissionOperator {
@@ -54,20 +55,27 @@ export const SCOPE_HIERARCHY: Record<PermissionScope, PermissionScope[]> = {
     PermissionScope.DEPARTMENT,
     PermissionScope.TEAM,
     PermissionScope.SELF,
+    PermissionScope.OWNER,
   ],
   [PermissionScope.COMPANY]: [
     PermissionScope.DEPARTMENT,
     PermissionScope.TEAM,
     PermissionScope.SELF,
+    PermissionScope.OWNER,
   ],
   [PermissionScope.DEPARTMENT]: [
     PermissionScope.TEAM,
     PermissionScope.SELF,
+    PermissionScope.OWNER,
   ],
   [PermissionScope.TEAM]: [
     PermissionScope.SELF,
+    PermissionScope.OWNER,
   ],
-  [PermissionScope.SELF]: [],
+  [PermissionScope.SELF]: [
+    PermissionScope.OWNER,
+  ],
+  [PermissionScope.OWNER]: [],
 };
 
 /**
