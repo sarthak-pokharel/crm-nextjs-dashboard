@@ -35,6 +35,18 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
   const fetchPermissions = async () => {
     try {
       setIsLoading(true);
+      
+      // Check if user is authenticated first
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      if (!token) {
+        console.log('PermissionsProvider: No auth token, skipping fetch');
+        setPermissions([]);
+        setOrganizationId(undefined);
+        setHasFetched(true);
+        setIsLoading(false);
+        return;
+      }
+      
       console.log('PermissionsProvider: Step 1 - Fetching user organizations...');
       
       // Step 1: Get user's organizations
