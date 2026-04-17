@@ -12,8 +12,8 @@ export function useUserPermissions() {
     queryKey: ['userPermissions'],
     queryFn: async () => {
       try {
-        const response = await apiClient.get<UserPermissions>('/auth/permissions');
-        return response;
+        const response = await apiClient('/auth/permissions');
+        return response as UserPermissions;
       } catch (error) {
         console.error('Failed to fetch permissions:', error);
         return { userId: 0, permissions: [] };
