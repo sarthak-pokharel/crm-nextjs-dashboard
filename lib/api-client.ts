@@ -2,9 +2,13 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:11177/api';
 
 export const createFetchWithAuth = (token?: string) => {
   return async (url: string, options: RequestInit = {}) => {
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers instanceof Headers
+        ? Object.fromEntries((options.headers as Headers).entries())
+        : Array.isArray(options.headers)
+        ? Object.fromEntries(options.headers as [string, string][])
+        : (options.headers as Record<string, string> | undefined) ?? {}),
     };
 
     // Get token from localStorage if not provided
