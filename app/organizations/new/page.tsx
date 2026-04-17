@@ -84,7 +84,7 @@ export default function CreateOrganizationPage() {
                         label="Slug"
                         placeholder="acme-corp (auto-generated if empty)"
                         error={errors.slug}
-                        helperText="Unique identifier for the organization"
+
                     />
 
                     <Textarea
