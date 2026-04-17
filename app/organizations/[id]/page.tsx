@@ -172,7 +172,6 @@ export default function EditOrganizationPage({ params }: { params: Promise<{ id:
                             label="Slug"
                             defaultValue={organization.slug}
                             error={errors.slug}
-                            helperText="Unique identifier for the organization"
                         />
 
                         <Textarea
