@@ -80,7 +80,7 @@ export default function OrganizationsPage() {
         {
             key: 'name',
             label: 'Name',
-            render: (value: string, row: Organization) => (
+            render: (value: string, row: Record<string, any>) => (
                 <div className="space-y-1">
                     <Link
                         href={`/organizations/${row.id}`}
@@ -102,8 +102,8 @@ export default function OrganizationsPage() {
         {
             key: 'id',
             label: 'Members',
-            render: (_: any, row: Organization) => {
-                const orgStats = stats[row.id];
+            render: (_: any, row: Record<string, any>) => {
+                const orgStats = stats[row.id as number];
                 return (
                     <span className="text-sm">
                         {orgStats ? `${orgStats.memberCount} members` : '—'}
@@ -129,7 +129,7 @@ export default function OrganizationsPage() {
         {
             key: 'actions',
             label: 'Actions',
-            render: (_: any, row: Organization) => (
+            render: (_: any, row: Record<string, any>) => (
                 <div className="flex gap-2">
                     <Button
                         variant="secondary"
@@ -151,7 +151,7 @@ export default function OrganizationsPage() {
                         <Button
                             variant="secondary"
                             size="sm"
-                            onClick={() => setOpenMenu(openMenu === row.id ? null : row.id)}
+                            onClick={() => setOpenMenu(openMenu === row.id ? null : row.id as number)}
                         >
                             <MoreVertical size={16} />
                         </Button>
@@ -169,7 +169,7 @@ export default function OrganizationsPage() {
                                 <button
                                     className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 text-red-600 flex items-center gap-2"
                                     onClick={() => {
-                                        handleDelete(row.id, row.name);
+                                        handleDelete(row.id as number, row.name as string);
                                         setOpenMenu(null);
                                     }}
                                 >
