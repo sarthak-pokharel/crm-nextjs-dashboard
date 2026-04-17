@@ -132,7 +132,7 @@ export default function RolesPage() {
         {
             key: 'name',
             label: 'Role Name',
-            render: (value: string, row: Role) => (
+            render: (value: string, row: Record<string, any>) => (
                 <Link href={`/roles/${row.id}`} className="flex items-center gap-2 text-blue-700 hover:text-blue-900">
                     <Shield size={16} className="text-blue-600" />
                     <span className="font-medium">{value}</span>
@@ -160,12 +160,12 @@ export default function RolesPage() {
         {
             key: 'actions',
             label: 'Actions',
-            render: (_: any, row: Role) => (
+            render: (_: any, row: Record<string, any>) => (
                 <div className="flex gap-2">
                     <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => openEdit(row)}
+                        onClick={() => openEdit(row as unknown as Role)}
                         title="Edit role"
                     >
                         <Edit2 size={14} />
