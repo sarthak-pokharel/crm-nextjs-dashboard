@@ -46,7 +46,7 @@ export function RootLayoutClient({ children }: RootLayoutClientProps) {
     <QueryProvider>
       <PermissionsProvider>
         {!isAuthPage && <Sidebar />}
-        <main className={isAuthPage ? 'min-h-screen' : 'ml-64 min-h-screen p-8'}>
+        <main className={isAuthPage ? 'min-h-screen' : 'ml-64 min-h-screen bg-gray-50/50 dark:bg-gray-950 p-8'}>
           {!isAuthPage && <ManagementNavbar />}
           {children}
         </main>
