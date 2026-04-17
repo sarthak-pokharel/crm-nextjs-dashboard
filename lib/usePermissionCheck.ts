@@ -24,10 +24,10 @@ export function usePermissionCheck() {
       hasPermission(permissions, `${resource}:update`, scope),
     canDelete: (resource: string, scope?: PermissionScope) =>
       hasPermission(permissions, `${resource}:delete`, scope),
-    canAll: (permissions: string[], scope?: PermissionScope) =>
-      hasAllPermissions(permissions, permissions, scope),
-    canAny: (permissions: string[], scope?: PermissionScope) =>
-      hasAnyPermission(permissions, permissions, scope),
+    canAll: (requiredPerms: string[], scope?: PermissionScope) =>
+      hasAllPermissions(permissions, requiredPerms, scope),
+    canAny: (requiredPerms: string[], scope?: PermissionScope) =>
+      hasAnyPermission(permissions, requiredPerms, scope),
     checkRequirement: (
       requirement: PermissionRequirement,
       scope?: PermissionScope
