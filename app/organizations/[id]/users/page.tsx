@@ -152,7 +152,7 @@ export default function OrganizationUsersPage({ params }: { params: Promise<{ id
         {
             key: 'name',
             label: 'User',
-            render: (_: any, row: OrgUser) => (
+            render: (_: any, row: Record<string, any>) => (
                 <div>
                     <p className="font-medium">{row.firstName} {row.lastName}</p>
                     <p className="text-xs text-gray-500">{row.email}</p>
@@ -180,14 +180,14 @@ export default function OrganizationUsersPage({ params }: { params: Promise<{ id
         {
             key: 'actions',
             label: 'Actions',
-            render: (_: any, row: OrgUser) => (
+            render: (_: any, row: Record<string, any>) => (
                 <div className="flex gap-2">
                     <Button
                         variant="secondary"
                         size="sm"
                         onClick={() => {
-                            setEditingUser(row);
-                            setSelectedRoleId(row.roleId.toString());
+                            setEditingUser(row as unknown as OrgUser);
+                            setSelectedRoleId((row.roleId as number).toString());
                             setShowEditModal(true);
                         }}
                     >
@@ -196,7 +196,7 @@ export default function OrganizationUsersPage({ params }: { params: Promise<{ id
                     <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => handleUnassignUser(row.id, `${row.firstName} ${row.lastName}`)}
+                        onClick={() => handleUnassignUser(row.id as number, `${row.firstName} ${row.lastName}`)}
                         className="text-red-600 border-red-200 hover:bg-red-50"
                     >
                         <Trash2 size={16} />
