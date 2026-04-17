@@ -40,7 +40,7 @@ export default function UsersPage() {
     {
       key: 'name',
       label: 'Name',
-      render: (_: any, row: User) => `${row.firstName} ${row.lastName}`,
+      render: (_: any, row: Record<string, any>) => `${row.firstName} ${row.lastName}`,
     },
     { 
       key: 'email', 
